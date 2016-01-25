@@ -2,6 +2,7 @@ package com.licheng.github.wechatalbum.localalbum;
 
 import android.database.Cursor;
 import android.provider.MediaStore;
+import android.util.Log;
 
 
 import com.licheng.github.wechatalbum.AppContext;
@@ -22,6 +23,13 @@ public class LocalAlbumHelper {
     private final List<LocalFile> fileList = new ArrayList<>();
     private final Map<String,List<LocalFile>> folders = new HashMap<>();
     private boolean isRunning = false;
+    private final List<LocalFile> checkedItems = new ArrayList<>();
+    private int curretSize;
+    private boolean resultOk = false;
+
+
+
+
     //大图遍历字段
     private static final String[] STORAGEIMAGES = {
             MediaStore.Images.Media._ID,
@@ -78,14 +86,15 @@ public class LocalAlbumHelper {
             if(file.exists()){
                 //获取缩略图uri
                 String thumbUri = getThumbnail(id,path);
-                //获取大图uri
-                String uri = MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI.buildUpon()
-                        .appendPath(String.valueOf(id)).build().toString();
+                //获取大图URI
+                String uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI.buildUpon().
+                        appendPath(Integer.toString(id)).build().toString();
+                Log.i("thumbUri",thumbUri+" "+uri);
                 if (StringUtils.isEmpty(uri)){
                     continue;
                 }
                 //如果缩略图URI不存在,则用大图URI
-                if(StringUtils.isEmpty(thumbUri)){
+                if(thumbUri == null || StringUtils.isEmpty(thumbUri)){
                     thumbUri = uri;
                 }
                 //获取目录名
@@ -93,6 +102,7 @@ public class LocalAlbumHelper {
 
                 LocalFile localfile = new LocalFile();
                 localfile.setOriginalUri(uri);
+                Log.i("thumbUriLast",thumbUri+" "+uri);
                 localfile.setThumbnailUri(thumbUri);
                 //设置图片方向
                 int degree = cursor.getInt(2);
@@ -112,6 +122,7 @@ public class LocalAlbumHelper {
             }
         }
         folders.put("所有图片",fileList);
+        Log.i("allpicsize",fileList.size()+"");
         cursor.close();
         isRunning=false;
     }
@@ -150,6 +161,28 @@ public class LocalAlbumHelper {
     //根据文件名获取该文件下所有文件
     public List<LocalFile> getFolder(String folder) {
         return folders.get(folder);
+    }
+
+
+    public List<LocalFile> getCheckedItems() {
+        return checkedItems;
+    }
+
+    public int getCurretSize() {
+        return curretSize;
+    }
+
+
+    public void setCurretSize(int curretSize) {
+        this.curretSize = curretSize;
+    }
+
+    public boolean isResultOk() {
+        return resultOk;
+    }
+
+    public void setResultOk(boolean resultOk) {
+        this.resultOk = resultOk;
     }
 
     public static class LocalFile{

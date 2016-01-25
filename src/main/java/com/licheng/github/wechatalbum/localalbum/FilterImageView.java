@@ -78,7 +78,4 @@ public class FilterImageView extends ImageView {
 			drawable.clearColorFilter();
 		}
 	}
-
-
-
 }

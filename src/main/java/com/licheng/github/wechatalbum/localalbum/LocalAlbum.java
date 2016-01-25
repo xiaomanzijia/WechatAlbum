@@ -83,6 +83,8 @@ public class LocalAlbum extends Activity implements View.OnClickListener {
         helper = LocalAlbumHelper.getInstance();
         adapter = new FolderApater(helper.getFolderMap(),LocalAlbum.this);
         folderNames = new ArrayList<>();
+
+
     }
 
     @Override

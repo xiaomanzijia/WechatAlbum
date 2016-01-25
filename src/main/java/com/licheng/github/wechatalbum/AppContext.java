@@ -8,6 +8,11 @@ import android.view.WindowManager;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.licheng.github.wechatalbum.localalbum.LocalAlbumHelper;
 import com.licheng.github.wechatalbum.util.ConfigConstants;
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 
 import java.io.File;
 
@@ -54,6 +59,22 @@ public class AppContext extends Application {
 
         //Fresco 初始化
         Fresco.initialize(this, ConfigConstants.getImagePipelineConfig(this));
+        initImageLoader(getApplicationContext());
+    }
+
+    private void initImageLoader(Context context) {
+        ImageLoaderConfiguration.Builder config = new ImageLoaderConfiguration.Builder(context);
+        config.threadPriority(Thread.NORM_PRIORITY);
+        config.denyCacheImageMultipleSizesInMemory();
+        config.memoryCacheSize((int) Runtime.getRuntime().maxMemory() / 4);
+        config.diskCacheFileNameGenerator(new Md5FileNameGenerator());
+        config.diskCacheSize(100 * 1024 * 1024); // 100 MiB
+        config.tasksProcessingOrder(QueueProcessingType.LIFO);
+        //修改连接超时时间5秒，下载超时时间5秒
+        config.imageDownloader(new BaseImageDownloader(appContext, 5 * 1000, 5 * 1000));
+        //		config.writeDebugLogs(); // Remove for release app
+        // Initialize ImageLoader with configuration.
+        ImageLoader.getInstance().init(config.build());
     }
 
     public String getCachePath() {

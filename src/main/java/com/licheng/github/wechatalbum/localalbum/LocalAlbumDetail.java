@@ -9,6 +9,7 @@ import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.licheng.github.wechatalbum.R;
@@ -70,12 +71,24 @@ public class LocalAlbumDetail extends Activity implements View.OnClickListener,C
                             //设置多选点击监听
                             adapter.setListener(LocalAlbumDetail.this);
                             gridView.setAdapter(adapter);
+
+                            //设置当前选中数量
+                            if(checkedItems.size()+helper.getCurretSize()>0){
+                                finish.setText("完成（"+(checkedItems.size()+helper.getCurretSize())+"/9)");
+                                finish.setEnabled(true);
+                            }else {
+                                finish.setText("完成");
+                                finish.setEnabled(false);
+                            }
                         }
                     }
                 });
             }
         }).start();
+        checkedItems = helper.getCheckedItems();
+        LocalAlbumHelper.getInstance().setResultOk(false);
     }
+
 
     private void initView() {
         title = (TextView) findViewById(R.id.album_title);
@@ -99,11 +112,37 @@ public class LocalAlbumDetail extends Activity implements View.OnClickListener,C
 
     @Override
     public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.album_finish:
+                finish();
+                helper.setResultOk(true);
+                break;
+        }
 
     }
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
+        if(!isChecked){
+            if(checkedItems.contains(buttonView.getTag())){
+                checkedItems.remove(buttonView.getTag());
+            }
+        }else {
+            if(!checkedItems.contains(buttonView.getTag())){
+                Log.d("选中的照片数量",checkedItems.size()+" "+helper.getCurretSize());
+                if(checkedItems.size()+helper.getCurretSize()>=9){
+                    Toast.makeText(LocalAlbumDetail.this,"最多只能选9张照片",Toast.LENGTH_SHORT).show();
+                    buttonView.setChecked(false);
+                }
+                checkedItems.add((LocalAlbumHelper.LocalFile) buttonView.getTag());
+            }
+        }
+        if(checkedItems.size()+helper.getCurretSize()>0){
+            finish.setText("完成（"+(checkedItems.size()+helper.getCurretSize())+"/9)");
+            finish.setEnabled(true);
+        }else {
+            finish.setText("完成");
+            finish.setEnabled(false);
+        }
     }
 }

@@ -91,7 +91,7 @@ public class AlbumViewPager extends ViewPager implements MatrixImageView.OnMovin
 			SimpleDraweeView imageView = (SimpleDraweeView) imageLayout.findViewById(R.id.image);
 //			imageView.setOnMovingListener(AlbumViewPager.this);
 //			imageView.setOnSingleTapListener(onSingleTapListener);
-			String path=paths.get(position);
+			String path = paths.get(position);
 			//图片加载 Fresco
 			Uri uri = Uri.parse(path);
 			imageView.setImageURI(uri);
