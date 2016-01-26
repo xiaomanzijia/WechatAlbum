@@ -117,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             null, null, files.get(i).getOrientation());
                     image.setOnClickListener(this);
                     picContainer.addView(image,picContainer.getChildCount()-1);
+                    helper.setCurretSize(picContainer.getChildCount()-1);
                 }
             }
         }

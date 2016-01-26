@@ -38,6 +38,8 @@ public class LocalAlbumDetailAdapter extends BaseAdapter {
     private CompoundButton.OnCheckedChangeListener listener;
     DisplayImageOptions options;
     private LocalAlbumHelper helper;
+    private List<LocalAlbumHelper.LocalFile> checkedItems;
+    private List<LocalAlbumHelper.LocalFile> checkedItemsAll;
 
     public void setListener(CompoundButton.OnCheckedChangeListener listener) {
         this.listener = listener;
@@ -60,6 +62,8 @@ public class LocalAlbumDetailAdapter extends BaseAdapter {
                 .setImageSize(new ImageSize(((AppContext) mContext.getApplicationContext()).getQuarterWidth(), 0))
                 .displayer(new SimpleBitmapDisplayer()).build();
         helper = LocalAlbumHelper.getInstance();
+        checkedItems = helper.getCheckedItems();
+        checkedItemsAll = helper.getCheckedItemsAll();
     }
 
     @Override
@@ -107,6 +111,9 @@ public class LocalAlbumDetailAdapter extends BaseAdapter {
 
         viewHolder.checkBox.setTag(localFile);
 //        viewHolder.checkBox.setChecked(checkedItems.contains(localFile));
+        viewHolder.checkBox.setChecked(checkedItemsAll.contains(localFile));
+        //移除之前所选中的照片
+        checkedItems.clear();
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

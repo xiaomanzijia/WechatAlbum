@@ -24,8 +24,10 @@ public class LocalAlbumHelper {
     private final Map<String,List<LocalFile>> folders = new HashMap<>();
     private boolean isRunning = false;
     private final List<LocalFile> checkedItems = new ArrayList<>();
+    private final List<LocalFile> checkedItemsAll = new ArrayList<>();
     private int curretSize;
     private boolean resultOk = false;
+
 
 
 
@@ -168,6 +170,10 @@ public class LocalAlbumHelper {
         return checkedItems;
     }
 
+    public List<LocalFile> getCheckedItemsAll() {
+        return checkedItemsAll;
+    }
+
     public int getCurretSize() {
         return curretSize;
     }
@@ -214,5 +220,4 @@ public class LocalAlbumHelper {
             this.thumbnailUri = thumbnailUri;
         }
     }
-
 }

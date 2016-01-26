@@ -35,6 +35,7 @@ public class LocalAlbumDetail extends Activity implements View.OnClickListener,C
     CheckBox checkBox;
     LocalAlbumHelper helper = LocalAlbumHelper.getInstance();
     List<LocalAlbumHelper.LocalFile> checkedItems ;
+    List<LocalAlbumHelper.LocalFile> checkedItemsAll ;
     private LocalAlbumDetailAdapter adapter;
 
     private String foldername;
@@ -80,15 +81,41 @@ public class LocalAlbumDetail extends Activity implements View.OnClickListener,C
                                 finish.setText("完成");
                                 finish.setEnabled(false);
                             }
+
+
                         }
                     }
                 });
             }
         }).start();
         checkedItems = helper.getCheckedItems();
+        checkedItemsAll = helper.getCheckedItemsAll();
         LocalAlbumHelper.getInstance().setResultOk(false);
     }
 
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        Log.i("生命周期","onPostResume");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.i("生命周期","onRestart");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.i("生命周期","onPause");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.i("生命周期","onDestroy");
+    }
 
     private void initView() {
         title = (TextView) findViewById(R.id.album_title);
@@ -124,17 +151,22 @@ public class LocalAlbumDetail extends Activity implements View.OnClickListener,C
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if(!isChecked){
-            if(checkedItems.contains(buttonView.getTag())){
+            if(checkedItems.contains(buttonView.getTag())||checkedItemsAll.contains(buttonView.getTag())){
                 checkedItems.remove(buttonView.getTag());
+                checkedItemsAll.remove(buttonView.getTag());
             }
         }else {
-            if(!checkedItems.contains(buttonView.getTag())){
-                Log.d("选中的照片数量",checkedItems.size()+" "+helper.getCurretSize());
+            if(!checkedItems.contains(buttonView.getTag())||!checkedItemsAll.contains(buttonView.getTag())){
+                checkedItems.add((LocalAlbumHelper.LocalFile) buttonView.getTag());
+                checkedItemsAll.add((LocalAlbumHelper.LocalFile) buttonView.getTag());
+                Log.d("选中的照片数量",(checkedItems.size()+" "+helper.getCurretSize())+" ");
                 if(checkedItems.size()+helper.getCurretSize()>=9){
                     Toast.makeText(LocalAlbumDetail.this,"最多只能选9张照片",Toast.LENGTH_SHORT).show();
                     buttonView.setChecked(false);
+                    return;
                 }
-                checkedItems.add((LocalAlbumHelper.LocalFile) buttonView.getTag());
+            }else{
+                return;
             }
         }
         if(checkedItems.size()+helper.getCurretSize()>0){
